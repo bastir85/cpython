@@ -83,6 +83,8 @@ class Queue(object):
         self._recv_bytes = self._reader.recv_bytes
         self._poll = self._reader.poll
 
+        self._start_thread()
+
     def put(self, obj, block=True, timeout=None):
         if self._closed:
             raise ValueError(f"Queue {self!r} is closed")
@@ -90,8 +92,6 @@ class Queue(object):
             raise Full
 
         with self._notempty:
-            if self._thread is None:
-                self._start_thread()
             self._buffer.append(obj)
             self._notempty.notify()
 
